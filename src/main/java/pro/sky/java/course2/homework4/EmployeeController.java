@@ -1,5 +1,6 @@
 package pro.sky.java.course2.homework4;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,41 +9,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/employee")
 public class EmployeeController {
 
+    private final EmployeeServiceImpl employeeServiceImpl;
 
-    private final EmployeeService addEmployee;
-    private final EmployeeService removeEmployee;
-    private final EmployeeService findEmployee;
-
-
-    public EmployeeController(EmployeeService addEmployee, EmployeeService removeEmployee, EmployeeService findEmployee) {
-        this.addEmployee = addEmployee;
-        this.removeEmployee = removeEmployee;
-        this.findEmployee = findEmployee;
+    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
+        this.employeeServiceImpl = employeeServiceImpl;
     }
 
-
-    @RequestMapping(path = "/add")
-    public Employee addEmployee(@RequestParam String firstName, @RequestParam String lastName) {
-        if (addEmployee.addEmployee(firstName, lastName) == null) {
-            throw new EmployeeArrayOverflowException("Массив переполнен");
-        }
-        return addEmployee.addEmployee(firstName, lastName);
+    @GetMapping(path = "/add")
+    public Employee addEmployee(@RequestParam("firstName") String firstName,
+                                @RequestParam("lastName") String lastName) {
+        Employee addedEmployee = employeeServiceImpl.addEmployee(firstName, lastName);
+        return addedEmployee;
     }
 
-    @RequestMapping(path = "/remove")
-    public Employee removeEmployee(@RequestParam String firstName, @RequestParam String lastName) {
-        if (removeEmployee.removeEmployee(firstName, lastName) == null) {
-            throw new EmployeeNotFoundException("Сотрудник " + firstName + " " + lastName + " не найден.");
-        }
-        return removeEmployee.removeEmployee(firstName, lastName);
+    @GetMapping(path = "/remove")
+    public Employee removeEmployee(@RequestParam("firstName") String firstName,
+                                   @RequestParam("lastName") String lastName) {
+        Employee removedEmployee = employeeServiceImpl.removeEmployee(firstName, lastName);
+        return removedEmployee;
     }
 
-    @RequestMapping(path = "/find")
-    public Employee findEmployee(@RequestParam String firstName, @RequestParam String lastName) {
-        if (findEmployee.findEmployee(firstName, lastName) == null) {
-            throw new EmployeeNotFoundException("Сотрудник " + firstName + " " + lastName + " не найден.");
-        }
-        return findEmployee.findEmployee(firstName, lastName);
+    @GetMapping(path = "/find")
+    public Employee findEmployee(@RequestParam("firstName") String firstName,
+                                 @RequestParam("lastName") String lastName) {
+        Employee foundEmployee = employeeServiceImpl.findEmployee(firstName, lastName);
+        return foundEmployee;
     }
 
 }
